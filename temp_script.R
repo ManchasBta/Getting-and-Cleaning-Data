@@ -36,18 +36,17 @@ total_data$Activity <- as.factor(total_data$Activity)
 total_data$Subject <- as.factor(total_data$Subject)
 
 ### Calculating mean and standard deviation for each measurement
-meansAndstdev <- as.data.frame(cbind(colMeans(total_data[,3:563], na.rm = TRUE), sapply(total_data[,3:563], sd, na.rm = TRUE)))
-names(meansAndstdev) <- c("Mean","StDev")
-write.table(meansAndstdev, "MeansAndStadev_RawData.csv", col.names=TRUE, sep=",")
+meansAndstdev <- cbind(colMeans(total_data[,3:563], na.rm = TRUE), sapply(total_data[,3:563], sd, na.rm = TRUE))
+mAsd <- as.data.frame(meansAndstdev)
+names(mAsd) <- c("Mean","StDev")
+write.table(mAsd, "MeansAndStadev_RawData.csv", col.names=TRUE, sep=",")
 
 ### Split Data set by Activity and by Subject
 split_activity <- split(total_data, total_data$Activity)
 split_subject <- split(total_data, total_data$Subject)
 
 meansByActivity <- lapply(split_activity, function(x) colMeans(x[,3:563], na.rm = TRUE))
-activity_data <- as.data.frame(meansByActivity)
-write.table(activity_data, "Activity_Data.csv", col.names=TRUE, sep=",")
-
 meansBySubject <- lapply(split_subject, function(x) colMeans(x[,3:563], na.rm = TRUE))
-subject_data <- as.data.frame(meansBySubject)
-write.table(subject_data, "Subject_Data.csv", col.names=TRUE, sep=",")
+
+stdevByActivity <- lapply(as.numeric(unlist(split_activity)), function(x) sd(x, na.rm = TRUE))
+stdevBySubject <- lapply(as.numeric(unlist(split_subject)), function(x) sd(x, na.rm = TRUE))
